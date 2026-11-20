@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Обратный отсчёт — 26.12.2026</title>
+  <!-- Поддержка Telegram Mini Apps -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg-1: #0b1026;
+      --bg-2: #171e3f;
+      --accent-1: #7dd3fc;
+      --accent-2: #c084fc;
+      --accent-3: #f472b6;
+      --glass-bg: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.16);
+      --text-main: #f8fafc;
+      --text-muted: rgba(226, 232, 240, 0.72);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: radial-gradient(circle at 20% 15%, #232b5c 0%, var(--bg-2) 40%, var(--bg-1) 100%);
+      color: var(--text-main);
+      user-select: none;
+    }
+
+    /* Мягкое фоновое свечение */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(70px);
+      opacity: 0.45;
+      pointer-events: none;
+      z-index: 0;
+      animation: floatOrb 12s ease-in-out infinite alternate;
+    }
+
+    .orb-1 {
+      width: 260px;
+      height: 260px;
+      background: var(--accent-2);
+      top: -70px;
+      left: -60px;
+    }
+
+    .orb-2 {
+      width: 280px;
+      height: 280px;
+      background: var(--accent-1);
+      bottom: -80px;
+      right: -70px;
+      animation-delay: -5s;
+    }
+
+    @keyframes floatOrb {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(24px, 18px) scale(1.1); }
+    }
+
+    /* Снежинки */
+    #snow {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .wrapper {
+      position: relative;
+      z-index: 2;
+      height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: calc(16px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom));
+    }
+
+    .card {
+      width: 100%;
+      max-width: 420px;
+      padding: 28px 20px 24px;
+      border-radius: 28px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18);
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(125, 211, 252, 0.12);
+      border: 1px solid rgba(125, 211, 252, 0.28);
+      color: var(--accent-1);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-1);
+      box-shadow: 0 0 8px var(--accent-1);
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+      margin-bottom: 6px;
+      background: linear-gradient(135deg, #ffffff 10%, #bae6fd 55%, #e9d5ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .target-date {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .unit {
+      padding: 14px 6px 12px;
+      border-radius: 18px;
+      background: rgba(15, 23, 42, 0.48);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      transition: transform 0.2s ease;
+    }
+
+    .unit:active {
+      transform: scale(0.96);
+    }
+
+    .num {
+      font-size: clamp(26px, 7.5vw, 34px);
+      font-weight: 800;
+      line-height: 1.1;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+    }
+
+    .unit.seconds .num {
+      background: linear-gradient(180deg, #7dd3fc, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .label {
+      margin-top: 6px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: lowercase;
+    }
+
+    .ekb-now {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .ekb-now strong {
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    .btn {
+      width: 100%;
+      border: none;
+      border-radius: 16px;
+      padding: 13px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #0b1026;
+      background: linear-gradient(135deg, #7dd3fc 0%, #c084fc 100%);
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.2s ease;
+      box-shadow: 0 8px 24px rgba(125, 211, 252, 0.25);
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .done-state {
+      display: none;
+      padding: 18px 8px 10px;
+    }
+
+    .done-state .emoji {
+      font-size: 46px;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .done-state h2 {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .done-state p {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 340px) {
+      .grid {
+        gap: 6px;
+      }
+      .card {
+        padding: 22px 14px 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <canvas id="snow"></canvas>
+
+  <main class="wrapper">
+    <section class="card">
+      <div class="badge">
+        <span class="dot"></span>
+        <span>Екатеринбург · UTC+5</span>
+      </div>
+
+      <h1>До заветного момента</h1>
+      <p class="target-date">26 декабря 2026 в 12:05 (ЕКБ)</p>
+
+      <div class="grid" id="timerGrid">
+        <div class="unit">
+          <div class="num" id="days">00</div>
+          <div class="label" id="daysLabel">дней</div>
+        </div>
+        <div class="unit">
+          <div class="num" id="hours">00</div>
+          <div class="label" id="hoursLabel">часов</div>
+        </div>
+        <div class="unit">
+          <div class="num" id="minutes">00</div>
+          <div class="label" id="minutesLabel">минут</div>
+        </div>
+        <div class="unit seconds">
+          <div class="num" id="seconds">00</div>
+          <div class="label" id="secondsLabel">секунд</div>
+        </div>
+      </div>
+
+      <div class="done-state" id="doneState">
+        <span class="emoji">✨</span>
+        <h2>Время пришло!</h2>
+        <p>26 декабря 2026 · 12:05 по Екатеринбургу</p>
+      </div>
+
+      <div class="ekb-now">
+        Сейчас в ЕКБ: <strong id="ekbClock">--:--:--</strong>
+      </div>
+
+      <button class="btn" id="copyBtn" type="button">
+        Скопировать остаток для чата
+      </button>
+    </section>
+  </main>
+
+  <script>
+    // 1. Интеграция с Telegram WebApp (безопасно работает и в обычном браузере)
+    const tg = window.Telegram && window.Telegram.WebApp;
+    if (tg) {
+      try {
+        tg.ready();
+        tg.expand();
+        if (tg.setHeaderColor) tg.setHeaderColor('#0b1026');
+        if (tg.setBackgroundColor) tg.setBackgroundColor('#0b1026');
+      } catch (e) {}
+    }
+
+    function haptic(style) {
+      try {
+        if (tg && tg.HapticFeedback) {
+          tg.HapticFeedback.impactOccurred(style || 'light');
+        }
+      } catch (e) {}
+    }
+
+    // 2. Целевое время: 26.12.2026 12:05:00 UTC+5 (Екатеринбург) = 07:05:00 UTC
+    const TARGET_UTC_MS = Date.UTC(2026, 11, 26, 7, 5, 0);
+
+    const els = {
+      days: document.getElementById('days'),
+      hours: document.getElementById('hours'),
+      minutes: document.getElementById('minutes'),
+      seconds: document.getElementById('seconds'),
+      daysLabel: document.getElementById('daysLabel'),
+      hoursLabel: document.getElementById('hoursLabel'),
+      minutesLabel: document.getElementById('minutesLabel'),
+      secondsLabel: document.getElementById('secondsLabel'),
+      timerGrid: document.getElementById('timerGrid'),
+      doneState: document.getElementById('doneState'),
+      ekbClock: document.getElementById('ekbClock'),
+      copyBtn: document.getElementById('copyBtn')
+    };
+
+    function declOfNum(n, titles) {
+      const cases = [2, 0, 1, 1, 1, 2];
+      return titles[(n % 100 > 4 && n % 100 < 20) ? 2 : cases[Math.min(n % 10, 5)]];
+    }
+
+    function pad(num) {
+      return String(num).padStart(2, '0');
+    }
+
+    function formatEkbNow(nowMs) {
+      try {
+        return new Intl.DateTimeFormat('ru-RU', {
+          timeZone: 'Asia/Yekaterinburg',
+          day: '2-digit',
+          month: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        }).format(new Date(nowMs));
+      } catch (e) {
+        // Резервный расчёт UTC+5, если в WebView нет базы IANA
+        const d = new Date(nowMs + 5 * 3600 * 1000);
+        return (
+          pad(d.getUTCDate()) + '.' +
+          pad(d.getUTCMonth() + 1) + ', ' +
+          pad(d.getUTCHours()) + ':' +
+          pad(d.getUTCMinutes()) + ':' +
+          pad(d.getUTCSeconds())
+        );
+      }
+    }
+
+    let lastText = '';
+
+    function updateTimer() {
+      const now = Date.now();
+      els.ekbClock.textContent = formatEkbNow(now);
+
+      const diff = TARGET_UTC_MS - now;
+
+      if (diff <= 0) {
+        els.timerGrid.style.display = 'none';
+        els.doneState.style.display = 'block';
+        lastText = '✨ 26.12.2026 12:05 (ЕКБ) уже наступило!';
+        return;
+      }
+
+      const totalSeconds = Math.floor(diff / 1000);
+      const d = Math.floor(totalSeconds / 86400);
+      const h = Math.floor((totalSeconds % 86400) / 3600);
+      const m = Math.floor((totalSeconds % 3600) / 60);
+      const s = totalSeconds % 60;
+
+      const dLabel = declOfNum(d, ['день', 'дня', 'дней']);
+      const hLabel = declOfNum(h, ['час', 'часа', 'часов']);
+      const mLabel = declOfNum(m, ['минута', 'минуты', 'минут']);
+      const sLabel = declOfNum(s, ['секунда', 'секунды', 'секунд']);
+
+      els.days.textContent = d;
+      els.hours.textContent = pad(h);
+      els.minutes.textContent = pad(m);
+      els.seconds.textContent = pad(s);
+
+      els.daysLabel.textContent = dLabel;
+      els.hoursLabel.textContent = hLabel;
+      els.minutesLabel.textContent = mLabel;
+      els.secondsLabel.textContent = sLabel;
+
+      lastText = `⏳ До 26.12.2026 12:05 (ЕКБ) осталось: ${d} ${dLabel} ${h} ${hLabel} ${m} ${mLabel} ${s} ${sLabel}`;
+    }
+
+    updateTimer();
+    setInterval(updateTimer, 1000);
+
+    // 3. Копирование остатка в буфер обмена
+    els.copyBtn.addEventListener('click', async () => {
+      haptic('medium');
+      try {
+        await navigator.clipboard.writeText(lastText);
+      } catch (e) {
+        const ta = document.createElement('textarea');
+        ta.value = lastText;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+
+      const prev = els.copyBtn.textContent;
+      els.copyBtn.textContent = 'Скопировано ✓';
+      setTimeout(() => {
+        els.copyBtn.textContent = prev;
+      }, 1800);
+    });
+
+    // 4. Лёгкая анимация снега (отключается при prefers-reduced-motion)
+    const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reduceMotion) {
+      const canvas = document.getElementById('snow');
+      const ctx = canvas.getContext('2d');
+      let w, h, flakes;
+
+      function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+        flakes = Array.from({ length: 42 }, () => ({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          r: Math.random() * 2.2 + 0.8,
+          vy: Math.random() * 0.7 + 0.35,
+          vx: (Math.random() - 0.5) * 0.35,
+          a: Math.random() * 0.5 + 0.25
+        }));
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, w, h);
+        for (const f of flakes) {
+          ctx.beginPath();
+          ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${f.a})`;
+          ctx.fill();
+
+          f.y += f.vy;
+          f.x += f.vx;
+
+          if (f.y > h + 4) {
+            f.y = -4;
+            f.x = Math.random() * w;
+          }
+          if (f.x > w + 4) f.x = -4;
+          if (f.x < -4) f.x = w + 4;
+        }
+        requestAnimationFrame(draw);
+      }
+
+      window.addEventListener('resize', resize);
+      resize();
+      draw();
+    }
+  </script>
+</body>
+</html>
